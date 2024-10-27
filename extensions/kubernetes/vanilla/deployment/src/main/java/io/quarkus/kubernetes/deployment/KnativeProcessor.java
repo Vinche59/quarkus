@@ -57,6 +57,7 @@ import io.quarkus.deployment.metrics.MetricsCapabilityBuildItem;
 import io.quarkus.deployment.pkg.PackageConfig;
 import io.quarkus.deployment.pkg.builditem.OutputTargetBuildItem;
 import io.quarkus.kubernetes.client.spi.KubernetesClientCapabilityBuildItem;
+import io.quarkus.kubernetes.deployment.nodeselector.AddNodeSelectorToRevisionDecorator;
 import io.quarkus.kubernetes.spi.ConfiguratorBuildItem;
 import io.quarkus.kubernetes.spi.CustomProjectRootBuildItem;
 import io.quarkus.kubernetes.spi.DecoratorBuildItem;
@@ -290,6 +291,8 @@ public class KnativeProcessor {
         result.addAll(createAppConfigVolumeAndEnvDecorators(name, config));
         config.hostAliases().entrySet().forEach(e -> result.add(new DecoratorBuildItem(KNATIVE,
                 new AddHostAliasesToRevisionDecorator(name, HostAliasConverter.convert(e)))));
+        config.nodeSelector().ifPresent(n -> result.add(new DecoratorBuildItem(KNATIVE,
+                new AddNodeSelectorToRevisionDecorator(name, NodeSelectorConverter.convert(n)))));
         config.sidecars().entrySet().forEach(e -> result
                 .add(new DecoratorBuildItem(KNATIVE, new AddSidecarToRevisionDecorator(name, ContainerConverter.convert(e)))));
 

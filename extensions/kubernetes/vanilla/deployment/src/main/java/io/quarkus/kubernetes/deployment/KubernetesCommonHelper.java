@@ -82,6 +82,7 @@ import io.quarkus.deployment.metrics.MetricsCapabilityBuildItem;
 import io.quarkus.deployment.pkg.PackageConfig;
 import io.quarkus.deployment.pkg.builditem.OutputTargetBuildItem;
 import io.quarkus.kubernetes.client.spi.KubernetesClientCapabilityBuildItem;
+import io.quarkus.kubernetes.deployment.nodeselector.AddNodeSelectorDecorator;
 import io.quarkus.kubernetes.spi.CustomProjectRootBuildItem;
 import io.quarkus.kubernetes.spi.DecoratorBuildItem;
 import io.quarkus.kubernetes.spi.KubernetesAnnotationBuildItem;
@@ -851,6 +852,10 @@ public class KubernetesCommonHelper {
 
         config.hostAliases().entrySet().forEach(e -> result
                 .add(new DecoratorBuildItem(target, new AddHostAliasesDecorator(name, HostAliasConverter.convert(e)))));
+
+        config.nodeSelector()
+                .ifPresent(n -> result.add(
+                        new DecoratorBuildItem(target, new AddNodeSelectorDecorator(name, NodeSelectorConverter.convert(n)))));
 
         config.initContainers().entrySet().forEach(e -> result
                 .add(new DecoratorBuildItem(target, new AddInitContainerDecorator(name, ContainerConverter.convert(e)))));
