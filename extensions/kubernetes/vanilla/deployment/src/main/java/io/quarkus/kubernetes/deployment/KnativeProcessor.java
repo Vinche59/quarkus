@@ -16,6 +16,7 @@ import io.dekorate.knative.decorator.AddAzureFileVolumeToRevisionDecorator;
 import io.dekorate.knative.decorator.AddConfigMapVolumeToRevisionDecorator;
 import io.dekorate.knative.decorator.AddEmptyDirVolumeToRevisionDecorator;
 import io.dekorate.knative.decorator.AddHostAliasesToRevisionDecorator;
+import io.dekorate.knative.decorator.AddNodeSelectorToRevisionDecorator;
 import io.dekorate.knative.decorator.AddPvcVolumeToRevisionDecorator;
 import io.dekorate.knative.decorator.AddSecretVolumeToRevisionDecorator;
 import io.dekorate.knative.decorator.AddSidecarToRevisionDecorator;
@@ -290,6 +291,8 @@ public class KnativeProcessor {
         result.addAll(createAppConfigVolumeAndEnvDecorators(name, config));
         config.hostAliases().entrySet().forEach(e -> result.add(new DecoratorBuildItem(KNATIVE,
                 new AddHostAliasesToRevisionDecorator(name, HostAliasConverter.convert(e)))));
+        config.nodeSelector().ifPresent(n -> result.add(new DecoratorBuildItem(KNATIVE,
+                new AddNodeSelectorToRevisionDecorator(name, NodeSelectorConverter.convert(n)))));
         config.sidecars().entrySet().forEach(e -> result
                 .add(new DecoratorBuildItem(KNATIVE, new AddSidecarToRevisionDecorator(name, ContainerConverter.convert(e)))));
 

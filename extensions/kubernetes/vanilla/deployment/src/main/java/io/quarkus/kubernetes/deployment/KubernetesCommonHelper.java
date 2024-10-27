@@ -44,6 +44,7 @@ import io.dekorate.kubernetes.decorator.AddLabelDecorator;
 import io.dekorate.kubernetes.decorator.AddLivenessProbeDecorator;
 import io.dekorate.kubernetes.decorator.AddMetadataToTemplateDecorator;
 import io.dekorate.kubernetes.decorator.AddMountDecorator;
+import io.dekorate.kubernetes.decorator.AddNodeSelectorDecorator;
 import io.dekorate.kubernetes.decorator.AddPvcVolumeDecorator;
 import io.dekorate.kubernetes.decorator.AddReadinessProbeDecorator;
 import io.dekorate.kubernetes.decorator.AddSecretVolumeDecorator;
@@ -851,6 +852,10 @@ public class KubernetesCommonHelper {
 
         config.hostAliases().entrySet().forEach(e -> result
                 .add(new DecoratorBuildItem(target, new AddHostAliasesDecorator(name, HostAliasConverter.convert(e)))));
+
+        config.nodeSelector()
+                .ifPresent(n -> result.add(
+                        new DecoratorBuildItem(target, new AddNodeSelectorDecorator(name, NodeSelectorConverter.convert(n)))));
 
         config.initContainers().entrySet().forEach(e -> result
                 .add(new DecoratorBuildItem(target, new AddInitContainerDecorator(name, ContainerConverter.convert(e)))));
